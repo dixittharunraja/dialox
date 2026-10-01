@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.turbo/
+.data/
+*.log
+.env
+.env.local
+report/
+
+# Capacitor Android: the native project itself is committed, but build output, local SDK
+# path config, and the assets Capacitor copies in from dist/ on every sync are not.
+apps/client/android/app/build/
+apps/client/android/build/
+apps/client/android/.gradle/
+apps/client/android/local.properties
+apps/client/android/app/src/main/assets/public/
+apps/client/android/app/src/main/assets/capacitor.config.json
+apps/client/android/capacitor-cordova-android-plugins/

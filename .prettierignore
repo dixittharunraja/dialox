@@ -1,0 +1,6 @@
+pnpm-lock.yaml
+**/drizzle/**
+**/dist/**
+**/node_modules/**
+docs/brief/**
+.data/**

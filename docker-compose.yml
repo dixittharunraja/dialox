@@ -1,0 +1,55 @@
+name: dialox
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: dialox
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dialox}
+      POSTGRES_DB: dialox
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dialox -d dialox']
+      interval: 3s
+      retries: 30
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      DATABASE_URL: postgres://dialox:${POSTGRES_PASSWORD:-dialox}@postgres:5432/dialox
+      MAIL_DOMAIN: ${MAIL_DOMAIN:-dialox.local}
+      DEFAULT_COUNTRY: ${DEFAULT_COUNTRY:-IN}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+      TOLL_FREE_NUMBER: ${TOLL_FREE_NUMBER:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_FROM_NUMBER: ${TWILIO_FROM_NUMBER:-}
+      OTP_MODE: ${OTP_MODE:-}
+      SMS_TEMPLATE: ${SMS_TEMPLATE:-}
+      SMTP_RELAY_URL: ${SMTP_RELAY_URL:-}
+      SIMULATOR_ENABLED: ${SIMULATOR_ENABLED:-true}
+      SEED_DEMO: ${SEED_DEMO:-true}
+    ports:
+      - '${SMTP_PORT:-2525}:2525'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/client/Dockerfile
+    ports:
+      - '${HTTP_PORT:-8080}:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/.turbo
+.data
+.git
+.husky
+.env
+.env.local
+*.docx
+*.pptx

@@ -1,0 +1,125 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* WhatsApp (mobile) and Gmail (web) design tokens, redefined for dark mode below. */
+@theme {
+  --font-sans: 'Segoe UI', 'Helvetica Neue', Roboto, system-ui, sans-serif;
+  --font-google: 'Google Sans', Roboto, 'Segoe UI', system-ui, sans-serif;
+
+  --color-wa-header: var(--wa-header);
+  --color-wa-header-text: var(--wa-header-text);
+  --color-wa-teal: #128c7e;
+  --color-wa-green: #25d366;
+  --color-wa-tick: #53bdeb;
+  --color-wa-panel: var(--wa-panel);
+  --color-wa-panel-2: var(--wa-panel-2);
+  --color-wa-chat: var(--wa-chat);
+  --color-wa-in: var(--wa-in);
+  --color-wa-out: var(--wa-out);
+  --color-wa-text: var(--wa-text);
+  --color-wa-muted: var(--wa-muted);
+  --color-wa-line: var(--wa-line);
+  --color-wa-accent: var(--wa-accent);
+
+  --color-gm-bg: var(--gm-bg);
+  --color-gm-surface: var(--gm-surface);
+  --color-gm-hover: var(--gm-hover);
+  --color-gm-active: var(--gm-active);
+  --color-gm-compose: var(--gm-compose);
+  --color-gm-text: var(--gm-text);
+  --color-gm-muted: var(--gm-muted);
+  --color-gm-line: var(--gm-line);
+  --color-gm-unread: var(--gm-unread);
+  --color-gm-blue: #0b57d0;
+}
+
+:root {
+  --wa-header: #075e54;
+  --wa-header-text: #ffffff;
+  --wa-panel: #ffffff;
+  --wa-panel-2: #f0f2f5;
+  --wa-chat: #efeae2;
+  --wa-in: #ffffff;
+  --wa-out: #d9fdd3;
+  --wa-text: #111b21;
+  --wa-muted: #667781;
+  --wa-line: #e9edef;
+  --wa-accent: #008069;
+
+  --gm-bg: #f6f8fc;
+  --gm-surface: #ffffff;
+  --gm-hover: #e9eef6;
+  --gm-active: #d3e3fd;
+  --gm-compose: #c2e7ff;
+  --gm-text: #1f1f1f;
+  --gm-muted: #5e5e5e;
+  --gm-line: #e0e3e7;
+  --gm-unread: #ffffff;
+  color-scheme: light;
+}
+
+.dark {
+  --wa-header: #1f2c34;
+  --wa-header-text: #e9edef;
+  --wa-panel: #111b21;
+  --wa-panel-2: #202c33;
+  --wa-chat: #0b141a;
+  --wa-in: #202c33;
+  --wa-out: #005c4b;
+  --wa-text: #e9edef;
+  --wa-muted: #8696a0;
+  --wa-line: #222d34;
+  --wa-accent: #00a884;
+
+  --gm-bg: #1b1b1b;
+  --gm-surface: #242424;
+  --gm-hover: #2f2f2f;
+  --gm-active: #004a77;
+  --gm-compose: #004a77;
+  --gm-text: #e3e3e3;
+  --gm-muted: #a8a8a8;
+  --gm-line: #3a3a3a;
+  --gm-unread: #2b2b2b;
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--wa-panel-2);
+  color: var(--wa-text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The subtle doodle-free WhatsApp wallpaper tone with a faint dotted texture. */
+.wa-wallpaper {
+  background-color: var(--wa-chat);
+  background-image: radial-gradient(color-mix(in srgb, var(--wa-muted) 14%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.mail-html {
+  overflow-wrap: anywhere;
+}
+.mail-html a {
+  color: var(--color-gm-blue);
+  text-decoration: underline;
+}
+.mail-html img {
+  max-width: 100%;
+  height: auto;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}

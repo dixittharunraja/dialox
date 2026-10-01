@@ -1,0 +1,7 @@
+{
+  "threshold": 2,
+  "minTokens": 60,
+  "reporters": ["console"],
+  "format": ["typescript", "tsx"],
+  "ignore": ["**/node_modules/**", "**/dist/**", "**/drizzle/**"]
+}

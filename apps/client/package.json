@@ -1,0 +1,35 @@
+{
+  "name": "@dialox/client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc -p tsconfig.json",
+    "build:android": "vite build && npx cap sync android && powershell -Command \"if (-not $env:JAVA_HOME -and (Test-Path 'C:\\Program Files\\Android\\Android Studio\\jbr')) { $env:JAVA_HOME='C:\\Program Files\\Android\\Android Studio\\jbr'; $env:Path+=';C:\\Program Files\\Android\\Android Studio\\jbr\\bin' }; cd android; .\\gradlew.bat assembleDebug; cd ..\"",
+    "install:android": "powershell -Command \"$env:Path += ';' + $env:LOCALAPPDATA + '\\Android\\Sdk\\platform-tools'; adb install -r android/app/build/outputs/apk/debug/app-debug.apk\""
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
+    "@dialox/shared": "workspace:*",
+    "@tanstack/react-query": "^5.90.2",
+    "dompurify": "^3.2.7",
+    "lucide-react": "^0.544.0",
+    "motion": "^12.23.22",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router": "^7.9.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "tailwindcss": "^4.1.13",
+    "vite": "^7.1.7"
+  }
+}

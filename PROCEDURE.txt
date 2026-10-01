@@ -1,0 +1,64 @@
+DIALOX - PROCEDURE
+==================
+
+Architecture and why
+--------------------
+- pnpm workspace + Turborepo: apps/api, apps/client, packages/shared.
+- One Vite SPA, not four apps. The mobile (/), web (/web), portal (/register) and simulator
+  (/simulator) surfaces share the API client, query hooks, phone helpers and auth state
+  machine; each surface is a lazy chunk so users only download their own.
+- packages/shared ships TypeScript source (no build step). Vite compiles it for the client;
+  tsup bundles it into the API (it is an API devDependency so the prod image needs no
+  workspace links). "sideEffects": false lets the client tree-shake zod away.
+- Postgres via Drizzle. Without DATABASE_URL the API falls back to embedded PGlite so local
+  dev needs no database server. The Db type is the postgres-js one; the PGlite instance is
+  cast to it (identical query builder).
+
+Core model (read before changing mail code)
+-------------------------------------------
+- messages: one row per email. mailbox_entries: one row per (user, message) holding that
+  user's folder/read/star/snooze/labels. Never put per-user state on messages.
+- conversations are per owner, keyed by the sorted set of OTHER participants. This single
+  rule gives 1:1 chats, group chats, and "individual mail stays in the 1:1 chat".
+- Chat locking and reply-once are enforced on the server (sendMail + the
+  messages_single_reply unique index). Clients only mirror the rules in the UI.
+- Delivery status on messages: sent | delivered | failed | read. "read" is set by
+  propagateReadReceipt once all local recipients have read the mail.
+- Telephony logic lives in services/telephony.ts and returns TwiML. Twilio webhooks and the
+  simulator routes call the same functions, so the simulator exercises the production path.
+
+Conventions
+-----------
+- Components PascalCase .tsx; hooks/utilities kebab-case .ts (use-compose.ts).
+- Server state: TanStack Query, keys prefixed by surface ('mobile' | 'web') because the two
+  surfaces hold separate sessions in one browser. Mutations invalidate the whole surface.
+- Realtime: the API pushes coarse events; clients just invalidate queries.
+- Styling: Tailwind tokens in apps/client/src/index.css. wa-* = WhatsApp, gm-* = Gmail.
+  Dark mode = the `dark` class on <html>, driven by the user's theme preference.
+- Icons: lucide-react only, monochrome. No emoji anywhere.
+- Mobile UI strings go through useT() (lib/i18n.ts, en/hi/ta/es). The web client is English.
+- Validation: every request body/query is parsed with a zod schema from packages/shared.
+
+How to extend
+-------------
+- New endpoint: schema in packages/shared/src/schemas.ts, route in apps/api/src/routes,
+  logic in a service, hook in apps/client/src/lib/queries.ts.
+- Schema change: edit apps/api/src/db/schema.ts, run `pnpm db:generate`, commit the new
+  file under apps/api/drizzle. Migrations apply automatically on boot.
+- New mobile screen: component under apps/client/src/mobile/<area>/, route in MobileApp.tsx,
+  strings in all four dictionaries.
+- New language: add to LANGUAGES and a full Dictionary in lib/i18n.ts and to the
+  profileSchema language enum.
+
+Quality gates
+-------------
+`pnpm check` = prettier --check, eslint (unused imports/vars are errors), strict tsc
+(noUnusedLocals/Parameters), knip (dead files/exports/deps), jscpd (duplication).
+The husky pre-commit hook runs the same on staged files.
+
+Decisions to revisit
+--------------------
+- In-process WebSocket hub: needs Postgres LISTEN/NOTIFY or Redis for multiple replicas.
+- Attachments in Postgres bytea: move to object storage at scale.
+- SMTP ingest trusts senders (no SPF/DKIM/DMARC, no TLS). Put a filtering MX in front.
+- Mobile is a PWA. A Capacitor shell would unlock native SIM/SMS Retriever APIs.
